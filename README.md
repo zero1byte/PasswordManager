@@ -96,7 +96,7 @@ Your input can help make this project more robust, secure, and useful to others.
 
 ## License
 
-This project is released under the [MIT License](LICENSE). You are free to use, modify, and distribute this project as long as the original license is included.
+This project is released under the [MIT License](). You are free to use, modify, and distribute this project as long as the original license is included.
 
 ---
 
