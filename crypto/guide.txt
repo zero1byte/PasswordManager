@@ -1,9 +1,0 @@
-# Install crypto++ library and config
-    $ git clone http://github.com/weidai11/cryptopp
-    
-# Install cmake and config
-    $ cd crypto
-    $ make
-    $ test 
-
-# Include crypto header files inside /usr/local/lib

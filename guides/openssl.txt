@@ -1,0 +1,10 @@
+$ git clone https://github.com/openssl/openssl.git
+OR
+$ git clone git@github.com/openssl/openssl.git
+
+# Install zip file  3.4.2
+https://openssl-library.org/source/
+
+
+# execute 
+$ g++ main.cpp -o main -lssl -lcrypto
