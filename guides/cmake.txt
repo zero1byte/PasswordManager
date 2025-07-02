@@ -1,0 +1,26 @@
+# Go to any workspace directory
+cd ~/Downloads
+
+# Clone Crypto++ from GitHub
+git clone https://github.com/weidai11/cryptopp.git
+
+# Enter the folder
+cd cryptopp
+
+# Make a build directory
+mkdir build && cd build
+
+# Run CMake to configure
+cmake ..
+
+# Compile
+make -j$(nproc)
+
+# Install headers and library files to /usr/local
+sudo make install
+
+
+# Build && Get compiled files for application
+$ mkdir -p build && cd build
+$ cmake ..
+$ make
