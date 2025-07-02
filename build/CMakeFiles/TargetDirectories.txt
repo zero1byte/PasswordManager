@@ -1,3 +1,0 @@
-/home/zero1byte/Zero1Byte/PasswordManager/build/CMakeFiles/main.dir
-/home/zero1byte/Zero1Byte/PasswordManager/build/CMakeFiles/edit_cache.dir
-/home/zero1byte/Zero1Byte/PasswordManager/build/CMakeFiles/rebuild_cache.dir
