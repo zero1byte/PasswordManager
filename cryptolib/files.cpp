@@ -8,6 +8,10 @@ using namespace std;
 #include <sys/stat.h>
 #include <fstream>
 
+
+//flag for files check 
+#define FILES_FLAG 0
+
 class filesManagement
 {
 

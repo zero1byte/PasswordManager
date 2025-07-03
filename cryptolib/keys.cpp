@@ -9,8 +9,9 @@ using namespace std;
 #include <openssl/bio.h>
 #include <openssl/err.h>
 
-#include "files.cpp"
+// check with macro that Is there already included or not
 #include "../constants.cpp"
+#include "files.cpp"
 
 class keys
 {
@@ -55,31 +56,34 @@ public:
 
         char *private_key_cstr;
         long priv_len = BIO_get_mem_data(bio_private, &private_key_cstr);
-        //insert public key into file
-        filesManagement keys(DATA_FOLDER);
-        keys.create_file(PRIVATE_KEY_FILE_NAME);
 
-        //get file path
-        PRIVATE_KEY_FILE_NAME.insert(0,"/");
-        PRIVATE_KEY_FILE_NAME.insert(0,DATA_FOLDER);
+        // insert private key into file
+        // if not then create private file to store key
+        filesManagement file(DATA_FOLDER);
+        file.create_file(PRIVATE_KEY_FILE_NAME);
 
-        cout<<PRIVATE_KEY_FILE_NAME<<endl;
-
-        // ofstream file(PRIVATE_KEY_FILE_NAME);
-        std::cout << "Private Key:\n"
-                  << std::string(private_key_cstr, priv_len) << std::endl;
-
-
+        // get file path and store private key
+        string path = DATA_FOLDER;
+        path.append("/");
+        path.append(string(PRIVATE_KEY_FILE_NAME));
+        ofstream Keyfile(path);
+        Keyfile << std::string(private_key_cstr, priv_len) << std::endl;
+        Keyfile.close();
 
         // Write public key
         BIO *bio_public = BIO_new(BIO_s_mem());
         if (!PEM_write_bio_PUBKEY(bio_public, pkey))
             handleErrors();
-
         char *public_key_cstr;
         long pub_len = BIO_get_mem_data(bio_public, &public_key_cstr);
-        std::cout << "Public Key:\n"
-                  << std::string(public_key_cstr, pub_len) << std::endl;
+
+        // store public key at file
+        file.create_file(PUBLIC_KEY_FILE_NAME);
+        string path_pr = DATA_FOLDER;
+        path_pr.append("/").append(PUBLIC_KEY_FILE_NAME);
+        ofstream public_key_file(path_pr);
+        public_key_file << std::string(public_key_cstr, pub_len) << std::endl;
+        public_key_file.close();
 
         // Cleanup
         BIO_free_all(bio_private);
