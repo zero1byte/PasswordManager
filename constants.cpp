@@ -6,3 +6,5 @@ const char *PUBLIC_KEY="public key";
 // folder name, where we store all the data files
 // const char *DATA_FOLDER="cryptolib//temp"; // 1
 const char *DATA_FOLDER="database_folder";
+
+string PRIVATE_KEY_FILE_NAME="private_key.txt";
