@@ -8,8 +8,11 @@ using namespace std;
 #include <sys/stat.h>
 #include <fstream>
 
+#ifndef CONSTANT_FILE_FLAG
+#include "constants.cpp"
+#endif
 
-//flag for files check 
+// flag for files check
 #define FILES_FLAG 0
 
 class filesManagement
@@ -25,6 +28,18 @@ public:
 
         // At begin  check from a dir, which use to store all data
         filesystem::path path = data_folder;
+        if (!filesystem::is_directory(path))
+        {
+            cout << "Error : data folder not exists !!\n";
+        }
+    }
+    filesManagement()
+    {
+
+        database_dir = DATA_FOLDER;
+
+        // At begin  check from a dir, which use to store all data
+        filesystem::path path = DATA_FOLDER;
         if (!filesystem::is_directory(path))
         {
             cout << "Error : data folder not exists !!\n";
@@ -87,6 +102,55 @@ public:
         return false;
     }
 
-    //write inside files
-    
+    // write inside files
+    string get_private_key()
+    {
+        string path = DATA_FOLDER;
+        path.append("/");
+        path.append(string(PRIVATE_KEY_FILE_NAME));
+
+        std::ifstream inputFile(path);
+        if (!inputFile.is_open())
+        {
+            cout << "private key find could not open!!\n";
+            return NULL;
+        }
+        string line;
+        string private_key;
+
+        // get line by line data from file
+        while (std::getline(inputFile, line))
+        {
+            private_key.append(line);
+            private_key.append("\n");
+        }
+
+        inputFile.close();
+        return private_key;
+    }
+    string get_public_key()
+    {
+        string path = DATA_FOLDER;
+        path.append("/");
+        path.append(string(PUBLIC_KEY_FILE_NAME));
+
+        std::ifstream inputFile(path);
+        if (!inputFile.is_open())
+        {
+            cout << "public_key key find could not open!!\n";
+            return NULL;
+        }
+        string line;
+        string public_key;
+
+        // get line by line data from file
+        while (std::getline(inputFile, line))
+        {
+            public_key.append(line);
+            public_key.append("\n");
+        }
+
+        inputFile.close();
+        return public_key;
+    }
 };

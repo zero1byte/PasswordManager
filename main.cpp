@@ -20,5 +20,7 @@ int main()
     }
 
     keys k1;
-    k1.rsa_key_pair();
+    // k1.rsa_key_pair();
+    string encrypted_key = k1.encrypt("HELLO World !");
+    cout << k1.decrypt("encrypted_key") << endl;
 }
