@@ -14,6 +14,7 @@ using namespace std;
 int main()
 {
     filesManagement f1(DATA_FOLDER);
+    
     if (!f1.is_directory())
     {
         f1.create_database_folder();
