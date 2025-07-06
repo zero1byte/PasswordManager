@@ -2,6 +2,7 @@
 using namespace std;
 
 #include <string.h>
+#include <vector>
 #include <iostream>
 
 #include <openssl/rsa.h>
@@ -10,7 +11,6 @@ using namespace std;
 #include <openssl/err.h>
 #include <openssl/engine.h>
 #include <openssl/evp.h>
-#include <vector>
 
 // check with macro that Is there already included or not
 #include "../constants.cpp"
@@ -251,3 +251,261 @@ public:
         return std::string(reinterpret_cast<char*>(outbuf.data()), outlen);
     }
 };
+
+class AES {
+
+    public:
+        string public_key;
+        string private_key;
+
+        string key;
+
+        string encrypted_public_key;
+        string encrypted_private_key;
+
+
+        AES(string pukey,string prkey,string key){
+            this->private_key=prkey;
+            this->public_key=pukey;
+            this->key=key;
+        };
+
+        AES(string epukey,string eprkey){
+            this->encrypted_public_key=epukey;
+            this->encrypted_private_key=eprkey;
+        };
+
+        // Encrypt private key (this->private_key) with AES & AES key will be this->key (e.g : key=  "This is my key")
+        string encrypt_private_key() {
+            // Use AES-256-CBC for encryption
+            const EVP_CIPHER *cipher = EVP_aes_256_cbc();
+
+            // Prepare key and IV (Initialization Vector)
+            unsigned char aes_key[32] = {0}; // 256 bits
+            unsigned char iv[16] = {0};      // 128 bits
+
+            // Copy or hash the key string to fit 32 bytes
+            size_t key_len = this->key.size();
+            if (key_len >= 32) {
+            memcpy(aes_key, this->key.data(), 32);
+            } else {
+            memcpy(aes_key, this->key.data(), key_len);
+            // Optionally, pad or hash for better security
+            }
+
+            // For demo, IV is zeros. In production, use random IV and store it with ciphertext.
+            // Encrypt
+            EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+            if (!ctx) return "";
+
+            if (EVP_EncryptInit_ex(ctx, cipher, NULL, aes_key, iv) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "";
+            }
+
+            std::vector<unsigned char> ciphertext(this->private_key.size() + EVP_CIPHER_block_size(cipher));
+            int outlen1 = 0;
+            if (EVP_EncryptUpdate(ctx, ciphertext.data(), &outlen1,
+                      reinterpret_cast<const unsigned char*>(this->private_key.data()),
+                      this->private_key.size()) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "";
+            }
+
+            int outlen2 = 0;
+            if (EVP_EncryptFinal_ex(ctx, ciphertext.data() + outlen1, &outlen2) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "";
+            }
+            EVP_CIPHER_CTX_free(ctx);
+
+            // Resize to actual ciphertext length
+            ciphertext.resize(outlen1 + outlen2);
+
+            // Encode to base64 for storage
+            BIO *b64 = BIO_new(BIO_f_base64());
+            BIO *mem = BIO_new(BIO_s_mem());
+            b64 = BIO_push(b64, mem);
+            BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+            BIO_write(b64, ciphertext.data(), ciphertext.size());
+            BIO_flush(b64);
+
+            BUF_MEM *bptr;
+            BIO_get_mem_ptr(b64, &bptr);
+            std::string encrypted_str(bptr->data, bptr->length);
+
+            BIO_free_all(b64);
+            this->encrypted_private_key=encrypted_str;
+            return encrypted_str;
+        }
+
+        string encrypt_public_key() {
+            // Use AES-256-CBC for encryption
+            const EVP_CIPHER *cipher = EVP_aes_256_cbc();
+
+            // Prepare key and IV (Initialization Vector)
+            unsigned char aes_key[32] = {0}; // 256 bits
+            unsigned char iv[16] = {0};      // 128 bits
+
+            // Copy or hash the key string to fit 32 bytes
+            size_t key_len = this->key.size();
+            if (key_len >= 32) {
+            memcpy(aes_key, this->key.data(), 32);
+            } else {
+            memcpy(aes_key, this->key.data(), key_len);
+            // Optionally, pad or hash for better security
+            }
+
+            // For demo, IV is zeros. In production, use random IV and store it with ciphertext.
+            // Encrypt
+            EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+            if (!ctx) return "";
+
+            if (EVP_EncryptInit_ex(ctx, cipher, NULL, aes_key, iv) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "";
+            }
+
+            std::vector<unsigned char> ciphertext(this->public_key.size() + EVP_CIPHER_block_size(cipher));
+            int outlen1 = 0;
+            if (EVP_EncryptUpdate(ctx, ciphertext.data(), &outlen1,
+                reinterpret_cast<const unsigned char*>(this->public_key.data()),
+                this->public_key.size()) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "";
+            }
+
+            int outlen2 = 0;
+            if (EVP_EncryptFinal_ex(ctx, ciphertext.data() + outlen1, &outlen2) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "";
+            }
+            EVP_CIPHER_CTX_free(ctx);
+
+            // Resize to actual ciphertext length
+            ciphertext.resize(outlen1 + outlen2);
+
+            // Encode to base64 for storage
+            BIO *b64 = BIO_new(BIO_f_base64());
+            BIO *mem = BIO_new(BIO_s_mem());
+            b64 = BIO_push(b64, mem);
+            BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+            BIO_write(b64, ciphertext.data(), ciphertext.size());
+            BIO_flush(b64);
+
+            BUF_MEM *bptr;
+            BIO_get_mem_ptr(b64, &bptr);
+            std::string encrypted_str(bptr->data, bptr->length);
+
+            BIO_free_all(b64);
+            this->encrypted_public_key=encrypted_str;
+
+            return encrypted_str;
+        }
+
+        string decrypt_private_key(string key){
+            const EVP_CIPHER *cipher = EVP_aes_256_cbc();
+
+            unsigned char aes_key[32] = {0};
+            unsigned char iv[16] = {0};
+
+            size_t key_len = key.size();
+            if (key_len >= 32) {
+            memcpy(aes_key, key.data(), 32);
+            } else {
+            memcpy(aes_key, key.data(), key_len);
+            }
+
+            // Decode base64
+            BIO *b64 = BIO_new(BIO_f_base64());
+            BIO *mem = BIO_new_mem_buf(this->encrypted_private_key.data(), this->encrypted_private_key.size());
+            b64 = BIO_push(b64, mem);
+            BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+
+            std::vector<unsigned char> ciphertext(this->encrypted_private_key.size());
+            int ciphertext_len = BIO_read(b64, ciphertext.data(), ciphertext.size());
+            BIO_free_all(b64);
+
+            if (ciphertext_len <= 0) {
+            return "NULL";
+            }
+
+            EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+            if (!ctx) return "NULL";
+
+            if (EVP_DecryptInit_ex(ctx, cipher, NULL, aes_key, iv) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "NULL";
+            }
+
+            std::vector<unsigned char> plaintext(ciphertext_len + EVP_CIPHER_block_size(cipher));
+            int outlen1 = 0;
+            if (EVP_DecryptUpdate(ctx, plaintext.data(), &outlen1, ciphertext.data(), ciphertext_len) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "NULL";
+            }
+
+            int outlen2 = 0;
+            if (EVP_DecryptFinal_ex(ctx, plaintext.data() + outlen1, &outlen2) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "NULL";
+            }
+            EVP_CIPHER_CTX_free(ctx);
+
+            plaintext.resize(outlen1 + outlen2);
+            return std::string(reinterpret_cast<char*>(plaintext.data()), plaintext.size());
+        }
+
+        string decrypt_public_key(string key){
+            const EVP_CIPHER *cipher = EVP_aes_256_cbc();
+
+            unsigned char aes_key[32] = {0};
+            unsigned char iv[16] = {0};
+
+            size_t key_len = key.size();
+            if (key_len >= 32) {
+            memcpy(aes_key, key.data(), 32);
+            } else {
+            memcpy(aes_key, key.data(), key_len);
+            }
+
+            // Decode base64
+            BIO *b64 = BIO_new(BIO_f_base64());
+            BIO *mem = BIO_new_mem_buf(this->encrypted_public_key.data(), this->encrypted_public_key.size());
+            b64 = BIO_push(b64, mem);
+            BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
+
+            std::vector<unsigned char> ciphertext(this->encrypted_public_key.size());
+            int ciphertext_len = BIO_read(b64, ciphertext.data(), ciphertext.size());
+            BIO_free_all(b64);
+
+            if (ciphertext_len <= 0) {
+            return "NULL";
+            }
+
+            EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+            if (!ctx) return "NULL";
+
+            if (EVP_DecryptInit_ex(ctx, cipher, NULL, aes_key, iv) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "NULL";
+            }
+
+            std::vector<unsigned char> plaintext(ciphertext_len + EVP_CIPHER_block_size(cipher));
+            int outlen1 = 0;
+            if (EVP_DecryptUpdate(ctx, plaintext.data(), &outlen1, ciphertext.data(), ciphertext_len) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "NULL";
+            }
+
+            int outlen2 = 0;
+            if (EVP_DecryptFinal_ex(ctx, plaintext.data() + outlen1, &outlen2) != 1) {
+            EVP_CIPHER_CTX_free(ctx);
+            return "NULL";
+            }
+            EVP_CIPHER_CTX_free(ctx);
+
+            plaintext.resize(outlen1 + outlen2);
+            return std::string(reinterpret_cast<char*>(plaintext.data()), plaintext.size());
+        }
+    };
