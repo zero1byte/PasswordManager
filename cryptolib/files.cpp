@@ -1,6 +1,5 @@
 // All files operation e.g: keys files & directory
 
-using namespace std;
 #include <iostream>
 #include <string.h>
 
@@ -8,6 +7,7 @@ using namespace std;
 #include <sys/stat.h>
 #include <fstream>
 
+using namespace std;
 #ifndef CONSTANT_FILE_FLAG
 #include "constants.cpp"
 #endif
