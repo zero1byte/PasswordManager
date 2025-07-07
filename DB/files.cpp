@@ -1,3 +1,5 @@
+#ifndef FILES_FLAG
+#define FILES_FLAG
 // All files operation e.g: keys files & directory
 
 #include <iostream>
@@ -7,13 +9,14 @@
 #include <sys/stat.h>
 #include <fstream>
 
+namespace fs=std::filesystem;
+
 using namespace std;
 #ifndef CONSTANT_FILE_FLAG
 #include "constants.cpp"
 #endif
 
 // flag for files check
-#define FILES_FLAG 0
 
 class filesManagement
 {
@@ -21,9 +24,9 @@ class filesManagement
 public:
     string database_dir;
 
+    //make a folder
     filesManagement(string data_folder)
     {
-
         database_dir = data_folder;
 
         // At begin  check from a dir, which use to store all data
@@ -33,6 +36,7 @@ public:
             cout << "Error : data folder not exists !!\n";
         }
     }
+
     filesManagement()
     {
 
@@ -85,13 +89,12 @@ public:
         if (filesystem::exists(file_path))
         {
             cout << "File already exixts" << endl;
-            return true;
+            return false;
         }
 
         cout << "Creating file : " << file_path << endl;
         ofstream file;
         file.open(file_path, std::ios::ate);
-        cout << file.is_open() << endl;
         if (file.is_open())
             // cout << "file created success" << endl;
             return true;
@@ -153,4 +156,13 @@ public:
         inputFile.close();
         return public_key;
     }
+
+    //check is file have inside in folder or not
+    bool is_fileExist(string filename){
+        return fs::exists(filename);
+    }
+
 };
+
+
+#endif

@@ -1,0 +1,8 @@
+INSERT|facebook.com|user1|pass1
+INSERT|gmail.com|user2|pass2
+UPDATE|facebook.com|newpass123
+DELETE|facebook.com
+INSERT|facebook.com|hello__|*$N)(D#BJ)
+INSERT|gmail.com|world__|KJD*EI#N$
+UPDATE|facebook.com|newpass123
+DELETE|facebook.com

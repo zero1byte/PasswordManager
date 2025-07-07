@@ -1,3 +1,7 @@
+
+#ifndef KEY_FILE_FLAG
+#define KEY_FILE_FLAG
+
 // 1. Generate Key pair of Public and Private key of RSA
 using namespace std;
 
@@ -14,7 +18,7 @@ using namespace std;
 
 // check with macro that Is there already included or not
 #include "../constants.cpp"
-#include "files.cpp"
+#include "../DB/files.cpp"
 
 class keys
 {
@@ -253,6 +257,7 @@ public:
 };
 
 class AES {
+
 
     public:
         string public_key;
@@ -509,3 +514,5 @@ class AES {
             return std::string(reinterpret_cast<char*>(plaintext.data()), plaintext.size());
         }
     };
+
+#endif

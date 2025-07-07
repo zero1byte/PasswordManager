@@ -10,8 +10,8 @@ using namespace std;
 int main() {
   
     PasswordDB db;
-    PasswordEntry p1 = {"facebook.com", "user1", "pass1","fuck you bitch"};
-    PasswordEntry p2 = {"gmail.com", "user2", "pass2"};
+    PasswordEntry p1 = {"facebook.com", "hello__", "*$N)(D#BJ)","first account"};
+    PasswordEntry p2 = {"gmail.com", "world__", "KJD*EI#N$"};
 
     db.insertEntry(p1);
     db.insertEntry(p2);
@@ -24,7 +24,7 @@ int main() {
 
     db.deleteEntry("facebook.com");
     db.viewEntry("facebook.com");
-     std::cout<<db.viewEntry("facebook.com").username<<endl;
+    std::cout<<db.viewEntry("facebook.com").username<<endl;
     std::cout<<db.viewEntry("facebook.com").password<<endl;
 
     return 0;

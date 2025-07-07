@@ -1,3 +1,7 @@
+#ifndef DATA_FILE_FLAG
+#define DATA_FILE_FLAG
+
+
 using namespace std;
 #include <iostream>
 #include <string>
@@ -5,7 +9,6 @@ using namespace std;
 #include "../utility/color.h"
 
 
-#define DATA_FILE_FLAG
 #define undefined "Undefined"
 #define EMPTY ""
 #define PATTERN FWHT("<<------------------------------------------>>")
@@ -44,7 +47,7 @@ public:
 
     Object()
     {
-        cout << "Empty Object Init" << endl;
+        // cout << "Empty Object Init" << endl;
     };
 
     Object(Object &d) = default;
@@ -79,3 +82,6 @@ public:
         return true;
     };
 };
+
+
+#endif

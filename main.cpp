@@ -5,18 +5,15 @@ using namespace std;
 
 #include "cryptolib/keys.cpp"
 
-#ifndef FILES_FLAG
-#include "cryptolib/files.cpp"
-#elifndef CONSTANT_FILE_FLAG
+#include "DB/files.cpp"
 #include "constants.cpp"
-#elifndef DATA_FILE_FLAG
-#include "db_logic/data.cpp"
-#endif
+#include "utility/data.cpp"
+#include "DB/db.cpp"
 
 int main()
 {
     // string str="X0NJjA/onqSIodeyEb5R9BLyfLVTHXgT3r6XagBOo/Ow1bbpFiy63oBIjjNseFDMPNchQU2UMHzpTrU+NGvy8VdrxWyCN6fsI7PC2xp95Yeay/Vwxaeb9dvicEd5esGjT0pmvn1YrEDR+5fF2ksOWGeuX2//JRTL9+cr71QFh0N3L7P2Nk78GFOgTlK0T1+ALjEkKaQf416sU3SnM+nbv/LlGieApYUlz5kPDDgwrHHk8eDbr1RJlg8SFAF1BIzkuWNykVHZlnn1eH34SBweqaN3D91GxzF300LPh7unID+wN0iE2V5m7OH2iV/MD5tXxJ5eU17lPFeKUl+8fCxShg=="
-    // ;cout<<str.length()<<endl;
+    // cout<<str.length()<<endl;
     // filesManagement f1(DATA_FOLDER);
 
     // if (!f1.is_directory())
@@ -41,6 +38,9 @@ int main()
 
 
     Object object("facebook.com","#JNJD)#$","first Account");
-    object.print();
+    // object.print();
+
+    localStorage store;
+    cout<<"Total Objects : "<<store.collections()<<endl;    
 
 }
